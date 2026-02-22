@@ -17,6 +17,7 @@ const (
 
 const (
 	TokenWhitespace parser.TokenType = iota
+	TokenComment
 	TokenIdent
 	TokenString
 	TokenHash
@@ -101,7 +102,11 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 		return tk.ReturnError(io.ErrUnexpectedEOF)
 	}
 
-	if tk.Accept(whitespace) {
+	if tk.Accept("/") {
+		if tk.Accept("*") {
+			return t.parseComment(tk)
+		}
+	} else if tk.Accept(whitespace) {
 		tk.AcceptRun(whitespace)
 
 		return tk.Return(TokenWhitespace, t.start)
@@ -162,4 +167,18 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	}
 
 	return tk.Return(TokenDelim, t.start)
+}
+
+func (t *tokeniser) parseComment(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
+	for {
+		if tk.ExceptRun("*") == -1 {
+			return tk.ReturnError(io.ErrUnexpectedEOF)
+		}
+
+		tk.Accept("*")
+
+		if tk.Accept("/") {
+			return tk.Return(TokenComment, t.start)
+		}
+	}
 }
