@@ -138,7 +138,15 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 		}
 	} else if tk.Accept("\\") {
 	} else if tk.Accept("{") {
+		t.pushState('}')
+
+		return tk.Return(TokenOpenBrace, t.start)
 	} else if tk.Accept("}") {
+		if t.isState('}') {
+			t.popState()
+
+			return tk.Return(TokenCloseBrace, t.start)
+		}
 	} else if tk.Accept(digit) {
 	} else if tk.Accept(identStart) {
 	}
