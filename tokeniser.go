@@ -120,10 +120,13 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 		}
 	} else if tk.Accept("+") {
 	} else if tk.Accept(",") {
+		return tk.Return(TokenComma, t.start)
 	} else if tk.Accept("-") {
 	} else if tk.Accept(".") {
 	} else if tk.Accept(":") {
+		return tk.Return(TokenColon, t.start)
 	} else if tk.Accept(";") {
+		return tk.Return(TokenSemiColon, t.start)
 	} else if tk.Accept("<") {
 	} else if tk.Accept("@") {
 	} else if tk.Accept("[") {
