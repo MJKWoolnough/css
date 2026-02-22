@@ -14,8 +14,12 @@ const (
 	letters      = upperLetters + lowerLetters
 )
 
+const (
+	TokenWhitespace parser.TokenType = iota
+)
+
 type preprocessor struct {
-	*parser.Tokeniser
+	parser.Tokeniser
 }
 
 func (p *preprocessor) ReadRune() (rune, int, error) {
@@ -36,8 +40,32 @@ func (p *preprocessor) ReadRune() (rune, int, error) {
 	return r, 0, nil
 }
 
-func CreateTokeniser(t *parser.Tokeniser) *parser.Tokeniser {
-	tk := parser.NewRuneReaderTokeniser(&preprocessor{t})
+func CreateTokeniser(t parser.Tokeniser) *parser.Tokeniser {
+	t = parser.NewRuneReaderTokeniser(&preprocessor{t})
 
-	return &tk
+	t.TokeniserState(new(tokeniser).start)
+
+	return &t
+}
+
+type tokeniser struct {
+	depth []rune
+}
+
+func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
+	if tk.Peek() == -1 {
+		if len(t.depth) == 0 {
+			return tk.Done()
+		}
+
+		return tk.ReturnError(io.ErrUnexpectedEOF)
+	}
+
+	if tk.Accept(whitespace) {
+		tk.AcceptRun(whitespace)
+
+		return tk.Return(TokenWhitespace, t.start)
+	}
+
+	return tk.ReturnError(nil)
 }
