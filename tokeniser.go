@@ -76,6 +76,22 @@ type tokeniser struct {
 	depth []rune
 }
 
+func (t *tokeniser) isState(r rune) bool {
+	if len(t.depth) == 0 {
+		return false
+	}
+
+	return t.depth[len(t.depth)-1] == r
+}
+
+func (t *tokeniser) pushState(r rune) {
+	t.depth = append(t.depth, r)
+}
+
+func (t *tokeniser) popState() {
+	t.depth = t.depth[:len(t.depth)-1]
+}
+
 func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
 	if tk.Peek() == -1 {
 		if len(t.depth) == 0 {
@@ -93,7 +109,15 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	} else if tk.Accept("#") {
 	} else if tk.Accept("'") {
 	} else if tk.Accept("(") {
+		t.pushState(')')
+
+		return tk.Return(TokenOpenParen, t.start)
 	} else if tk.Accept(")") {
+		if t.isState(')') {
+			t.popState()
+
+			return tk.Return(TokenCloseParen, t.start)
+		}
 	} else if tk.Accept("+") {
 	} else if tk.Accept(",") {
 	} else if tk.Accept("-") {
