@@ -128,6 +128,13 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	} else if tk.Accept(";") {
 		return tk.Return(TokenSemiColon, t.start)
 	} else if tk.Accept("<") {
+		s := tk.State()
+
+		if tk.Accept("-") && tk.Accept("-") {
+			return tk.Return(TokenCDO, t.start)
+		}
+
+		s.Reset()
 	} else if tk.Accept("@") {
 	} else if tk.Accept("[") {
 		t.pushState(']')
