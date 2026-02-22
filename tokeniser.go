@@ -8,14 +8,38 @@ import (
 
 const (
 	whitespace   = " \t\r\n\f"
-	digits       = "0123456789"
+	digit        = "0123456789"
 	upperLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	lowerLetters = "abcdefghijklmnopqrstuvwxyz"
 	letters      = upperLetters + lowerLetters
+	identStart   = letters + "_"
 )
 
 const (
 	TokenWhitespace parser.TokenType = iota
+	TokenIdent
+	TokenString
+	TokenHash
+	TokenNumber
+	TokenComma
+	TokenCDC
+	TokenCDO
+	TokenColon
+	TokenSemiColon
+	TokenAtKeyword
+	TokenOpenParen
+	TokenCloseParen
+	TokenOpenBracket
+	TokenCloseBracket
+	TokenOpenBrace
+	TokenCloseBrace
+	TokenFunction
+	TokenBadString
+	TokenURL
+	TokenBadURL
+	TokenPercentage
+	TokenDimension
+	TokenDelim
 )
 
 type preprocessor struct {
@@ -65,7 +89,27 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 		tk.AcceptRun(whitespace)
 
 		return tk.Return(TokenWhitespace, t.start)
+	} else if tk.Accept("\"") {
+	} else if tk.Accept("#") {
+	} else if tk.Accept("'") {
+	} else if tk.Accept("(") {
+	} else if tk.Accept(")") {
+	} else if tk.Accept("+") {
+	} else if tk.Accept(",") {
+	} else if tk.Accept("-") {
+	} else if tk.Accept(".") {
+	} else if tk.Accept(":") {
+	} else if tk.Accept(";") {
+	} else if tk.Accept("<") {
+	} else if tk.Accept("@") {
+	} else if tk.Accept("[") {
+	} else if tk.Accept("\\") {
+	} else if tk.Accept("]") {
+	} else if tk.Accept("{") {
+	} else if tk.Accept("}") {
+	} else if tk.Accept(digit) {
+	} else if tk.Accept(identStart) {
 	}
 
-	return tk.ReturnError(nil)
+	return tk.Return(TokenDelim, t.start)
 }
