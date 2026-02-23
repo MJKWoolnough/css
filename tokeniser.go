@@ -7,14 +7,14 @@ import (
 )
 
 const (
-	whitespace   = " \t\r\n\f"
+	whitespace   = " \t\n"
 	digit        = "0123456789"
 	upperLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	lowerLetters = "abcdefghijklmnopqrstuvwxyz"
 	letters      = upperLetters + lowerLetters
 	identStart   = letters + "_"
 	hexDigits    = digit + "abcdefABCDEF"
-	noEscape     = "\n\r\f"
+	noEscape     = "\n"
 )
 
 const (
@@ -60,7 +60,7 @@ func (p *preprocessor) ReadRune() (rune, int, error) {
 		p.Accept("\n")
 
 		r = '\n'
-	case '\x0c':
+	case '\f':
 		r = '\n'
 	}
 
