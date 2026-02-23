@@ -89,6 +89,24 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
+		{ // 11
+			"{}[",
+			[]parser.Token{
+				{Type: TokenOpenBrace, Data: "{"},
+				{Type: TokenCloseBrace, Data: "}"},
+				{Type: TokenOpenBracket, Data: "["},
+				{Type: parser.TokenError, Data: "unexpected EOF"},
+			},
+		},
+		{ // 12
+			"[(]",
+			[]parser.Token{
+				{Type: TokenOpenBracket, Data: "["},
+				{Type: TokenOpenParen, Data: "("},
+				{Type: TokenDelim, Data: "]"},
+				{Type: parser.TokenError, Data: "unexpected EOF"},
+			},
+		},
 	} {
 		p := CreateTokeniser(parser.NewStringTokeniser(test.Input))
 
