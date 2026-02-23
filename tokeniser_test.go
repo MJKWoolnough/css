@@ -107,6 +107,15 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenError, Data: "unexpected EOF"},
 			},
 		},
+		{ // 13
+			",:;",
+			[]parser.Token{
+				{Type: TokenComma, Data: ","},
+				{Type: TokenColon, Data: ":"},
+				{Type: TokenSemiColon, Data: ";"},
+				{Type: parser.TokenDone},
+			},
+		},
 	} {
 		p := CreateTokeniser(parser.NewStringTokeniser(test.Input))
 
