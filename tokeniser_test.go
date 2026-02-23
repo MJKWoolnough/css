@@ -28,6 +28,67 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
+		{ // 3
+			"\"a string\"",
+			[]parser.Token{
+				{Type: TokenString, Data: "\"a string\""},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 4
+			" \"a string with an escape \\20\" ",
+			[]parser.Token{
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenString, Data: "\"a string with an escape \\20\""},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 5
+			"'escaped newline \\\n'",
+			[]parser.Token{
+				{Type: TokenString, Data: "'escaped newline \\\n'"},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 6
+			"'escape followed by newline \\A\n'",
+			[]parser.Token{
+				{Type: TokenString, Data: "'escape followed by newline \\A\n'"},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 7
+			"'escape followed by newline \\AaFf01\n'",
+			[]parser.Token{
+				{Type: TokenString, Data: "'escape followed by newline \\AaFf01\n'"},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 8
+			"'escape followed by newline \\AaFf012\n'",
+			[]parser.Token{
+				{Type: TokenBadString, Data: "'escape followed by newline \\AaFf012\n"},
+				{Type: TokenBadString, Data: "'"},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 9
+			"'bad string\n ",
+			[]parser.Token{
+				{Type: TokenBadString, Data: "'bad string\n"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 10
+			"'\"'\"'\"",
+			[]parser.Token{
+				{Type: TokenString, Data: "'\"'"},
+				{Type: TokenString, Data: "\"'\""},
+				{Type: parser.TokenDone},
+			},
+		},
 	} {
 		p := CreateTokeniser(parser.NewStringTokeniser(test.Input))
 
