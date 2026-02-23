@@ -13,6 +13,8 @@ const (
 	lowerLetters = "abcdefghijklmnopqrstuvwxyz"
 	letters      = upperLetters + lowerLetters
 	identStart   = letters + "_"
+	hexDigits    = digit + "abcdefABCDEF"
+	noEscape     = "\n\r\f"
 )
 
 const (
@@ -110,9 +112,11 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 		tk.AcceptRun(whitespace)
 
 		return tk.Return(TokenWhitespace, t.start)
-	} else if tk.Accept("\"") {
-	} else if tk.Accept("#") {
+	} else if tk.Accept(`"`) {
+		return t.string(tk)
 	} else if tk.Accept("'") {
+		return t.string(tk)
+	} else if tk.Accept("#") {
 	} else if tk.Accept("(") {
 		t.pushState(')')
 
@@ -179,6 +183,44 @@ func (t *tokeniser) parseComment(tk *parser.Tokeniser) (parser.Token, parser.Tok
 
 		if tk.Accept("/") {
 			return tk.Return(TokenComment, t.start)
+		}
+	}
+}
+
+func (t *tokeniser) string(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
+	tk.Reset()
+
+	var chars string
+
+	switch tk.Next() {
+	case '"':
+		chars = "\"\\\n"
+	case '\'':
+		chars = "'\\\n"
+	}
+
+	for {
+		switch tk.ExceptRun(chars) {
+		case '\n':
+			tk.Next()
+
+			fallthrough
+		case -1:
+			return tk.Return(TokenBadString, t.start)
+		case '"', '\'':
+			tk.Next()
+
+			return tk.Return(TokenString, t.start)
+		case '\\':
+			tk.Next()
+
+			if !tk.Accept(noEscape) && tk.Accept(hexDigits) {
+				for range 5 {
+					tk.Accept(hexDigits)
+				}
+
+				tk.Accept(whitespace)
+			}
 		}
 	}
 }
