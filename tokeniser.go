@@ -127,10 +127,8 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 
 			return tk.Return(TokenCloseParen, t.start)
 		}
-	} else if tk.Accept("+") {
 	} else if tk.Accept(",") {
 		return tk.Return(TokenComma, t.start)
-	} else if tk.Accept("-") {
 	} else if tk.Accept(".") {
 	} else if tk.Accept(":") {
 		return tk.Return(TokenColon, t.start)
@@ -166,7 +164,8 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 
 			return tk.Return(TokenCloseBrace, t.start)
 		}
-	} else if tk.Accept(digit) {
+	} else if tk.Accept(digit) || tk.Accept("+-") {
+		return t.number(tk)
 	} else if tk.Accept(identStart) {
 	}
 
@@ -223,4 +222,19 @@ func (t *tokeniser) string(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 			}
 		}
 	}
+}
+
+func (t *tokeniser) number(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
+	tk.AcceptRun(digit)
+
+	if tk.Accept(".") {
+		tk.AcceptRun(digit)
+	}
+
+	if tk.Accept("eE") {
+		tk.Accept("+-")
+		tk.AcceptRun(digit)
+	}
+
+	return tk.Return(TokenNumber, t.start)
 }
