@@ -10,7 +10,25 @@ func TestTokeniser(t *testing.T) {
 	for n, test := range [...]struct {
 		Input  string
 		Output []parser.Token
-	}{} {
+	}{
+		{ // 1
+			"/* A Comment *//* Another Comment */",
+			[]parser.Token{
+				{Type: TokenComment, Data: "/* A Comment */"},
+				{Type: TokenComment, Data: "/* Another Comment */"},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 2
+			" /* A Comment */\n \t",
+			[]parser.Token{
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenComment, Data: "/* A Comment */"},
+				{Type: TokenWhitespace, Data: "\n \t"},
+				{Type: parser.TokenDone},
+			},
+		},
+	} {
 		p := CreateTokeniser(parser.NewStringTokeniser(test.Input))
 
 		for m, tkn := range test.Output {
