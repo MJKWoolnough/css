@@ -12,6 +12,13 @@ func TestTokeniser(t *testing.T) {
 		Output []parser.Token
 	}{
 		{ // 1
+			" \t\n\r\r\n\f",
+			[]parser.Token{
+				{Type: TokenWhitespace, Data: " \t\n\n\n\n"},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 2
 			"/* A Comment *//* Another Comment */",
 			[]parser.Token{
 				{Type: TokenComment, Data: "/* A Comment */"},
@@ -19,7 +26,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 2
+		{ // 3
 			" /* A Comment */\n \t",
 			[]parser.Token{
 				{Type: TokenWhitespace, Data: " "},
@@ -28,14 +35,14 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 3
+		{ // 4
 			"\"a string\"",
 			[]parser.Token{
 				{Type: TokenString, Data: "\"a string\""},
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 4
+		{ // 5
 			" \"a string with an escape \\20\" ",
 			[]parser.Token{
 				{Type: TokenWhitespace, Data: " "},
@@ -44,28 +51,28 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 5
+		{ // 6
 			"'escaped newline \\\n'",
 			[]parser.Token{
 				{Type: TokenString, Data: "'escaped newline \\\n'"},
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 6
+		{ // 7
 			"'escape followed by newline \\A\n'",
 			[]parser.Token{
 				{Type: TokenString, Data: "'escape followed by newline \\A\n'"},
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 7
+		{ // 8
 			"'escape followed by newline \\AaFf01\n'",
 			[]parser.Token{
 				{Type: TokenString, Data: "'escape followed by newline \\AaFf01\n'"},
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 8
+		{ // 9
 			"'escape followed by newline \\AaFf012\n'",
 			[]parser.Token{
 				{Type: TokenBadString, Data: "'escape followed by newline \\AaFf012\n"},
@@ -73,7 +80,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 9
+		{ // 10
 			"'bad string\n ",
 			[]parser.Token{
 				{Type: TokenBadString, Data: "'bad string\n"},
@@ -81,7 +88,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 10
+		{ // 11
 			"'\"'\"'\"",
 			[]parser.Token{
 				{Type: TokenString, Data: "'\"'"},
@@ -89,7 +96,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 11
+		{ // 12
 			"{}[",
 			[]parser.Token{
 				{Type: TokenOpenBrace, Data: "{"},
@@ -98,7 +105,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenError, Data: "unexpected EOF"},
 			},
 		},
-		{ // 12
+		{ // 13
 			"[(]",
 			[]parser.Token{
 				{Type: TokenOpenBracket, Data: "["},
@@ -107,7 +114,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenError, Data: "unexpected EOF"},
 			},
 		},
-		{ // 13
+		{ // 14
 			",:;",
 			[]parser.Token{
 				{Type: TokenComma, Data: ","},
