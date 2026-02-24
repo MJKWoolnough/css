@@ -165,7 +165,13 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 
 			return tk.Return(TokenCloseBrace, t.start)
 		}
-	} else if tk.Accept(digit) || tk.Accept("+-") {
+	} else if tk.Accept(digit) || tk.Accept("+") {
+		return t.number(tk)
+	} else if tk.Accept("-") {
+		if tk.Accept("-") || tk.Accept(identStart) || tk.Accept("\\") {
+			return t.ident(tk)
+		}
+
 		return t.number(tk)
 	} else if tk.Accept(identStart) {
 		return t.ident(tk)
@@ -231,6 +237,8 @@ func acceptEscape(tk *parser.Tokeniser) {
 }
 
 func (t *tokeniser) number(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
+	tk.Reset()
+	tk.Accept("+-")
 	tk.AcceptRun(digit)
 
 	if tk.Accept(".") {
