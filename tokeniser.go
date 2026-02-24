@@ -131,6 +131,9 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	} else if tk.Accept(",") {
 		return tk.Return(TokenComma, t.start)
 	} else if tk.Accept(".") {
+		if tk.Accept(digit) {
+			return t.number(tk)
+		}
 	} else if tk.Accept(":") {
 		return tk.Return(TokenColon, t.start)
 	} else if tk.Accept(";") {
