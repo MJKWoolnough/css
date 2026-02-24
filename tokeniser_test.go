@@ -178,6 +178,17 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
+		{ // 18
+			"<!-- --><!---->",
+			[]parser.Token{
+				{Type: TokenCDO, Data: "<!--"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenCDC, Data: "-->"},
+				{Type: TokenCDO, Data: "<!--"},
+				{Type: TokenCDC, Data: "-->"},
+				{Type: parser.TokenDone},
+			},
+		},
 	} {
 		p := CreateTokeniser(parser.NewStringTokeniser(test.Input))
 
