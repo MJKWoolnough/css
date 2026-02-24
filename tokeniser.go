@@ -212,15 +212,19 @@ func (t *tokeniser) string(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 			return tk.Return(TokenString, t.start)
 		case '\\':
 			tk.Next()
+			acceptEscape(tk)
 
-			if !tk.Accept(noEscape) && tk.Accept(hexDigits) {
-				for range 5 {
-					tk.Accept(hexDigits)
-				}
-
-				tk.Accept(whitespace)
-			}
 		}
+	}
+}
+
+func acceptEscape(tk *parser.Tokeniser) {
+	if !tk.Accept(noEscape) && tk.Accept(hexDigits) {
+		for range 5 {
+			tk.Accept(hexDigits)
+		}
+
+		tk.Accept(whitespace)
 	}
 }
 
