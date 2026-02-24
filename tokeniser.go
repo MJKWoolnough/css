@@ -144,6 +144,7 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 
 		s.Reset()
 	} else if tk.Accept("@") {
+		return t.ident(tk)
 	} else if tk.Accept("[") {
 		t.pushState(']')
 
@@ -155,6 +156,7 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 			return tk.Return(TokenCloseBracket, t.start)
 		}
 	} else if tk.Accept("\\") {
+		return t.ident(tk)
 	} else if tk.Accept("{") {
 		t.pushState('}')
 
@@ -256,6 +258,12 @@ func (t *tokeniser) number(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
 	tk.Reset()
 
+	id := TokenIdent
+
+	if tk.Accept("@") {
+		id = TokenAtKeyword
+	}
+
 	if !tk.Accept("-") || !tk.Accept("-") {
 		if tk.Accept("\\") {
 			acceptEscape(tk)
@@ -271,7 +279,7 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 		}
 	}
 
-	return tk.Return(TokenIdent, t.start)
+	return tk.Return(id, t.start)
 }
 
 func acceptNonAscii(tk *parser.Tokeniser) bool {
