@@ -13,6 +13,7 @@ const (
 	lowerLetters = "abcdefghijklmnopqrstuvwxyz"
 	letters      = upperLetters + lowerLetters
 	identStart   = letters + "_"
+	identCont    = letters + "_" + digit + "-"
 	hexDigits    = digit + "abcdefABCDEF"
 	noEscape     = "\n"
 )
@@ -167,6 +168,7 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	} else if tk.Accept(digit) || tk.Accept("+-") {
 		return t.number(tk)
 	} else if tk.Accept(identStart) {
+		return t.ident(tk)
 	}
 
 	return tk.Return(TokenDelim, t.start)
@@ -241,4 +243,35 @@ func (t *tokeniser) number(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 	}
 
 	return tk.Return(TokenNumber, t.start)
+}
+
+func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
+	tk.Reset()
+
+	if !tk.Accept("-") || !tk.Accept("-") {
+		if tk.Accept("\\") {
+			acceptEscape(tk)
+		} else if !tk.Accept(identStart) {
+			acceptNonAscii(tk)
+		}
+	}
+
+	for {
+		if tk.Accept("\\") {
+		} else if !tk.Accept(identCont) && !acceptNonAscii(tk) {
+			break
+		}
+	}
+
+	return tk.Return(TokenIdent, t.start)
+}
+
+func acceptNonAscii(tk *parser.Tokeniser) bool {
+	if c := tk.Peek(); c < 0x80 {
+		return false
+	}
+
+	tk.Next()
+
+	return true
 }
