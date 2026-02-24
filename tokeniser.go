@@ -141,7 +141,7 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	} else if tk.Accept("<") {
 		s := tk.State()
 
-		if tk.Accept("-") && tk.Accept("-") {
+		if tk.AcceptString("!--", false) == 3 {
 			return tk.Return(TokenCDO, t.start)
 		}
 
@@ -173,7 +173,13 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	} else if tk.Accept(digit) || tk.Accept("+") {
 		return t.number(tk)
 	} else if tk.Accept("-") {
-		if tk.Accept("-") || tk.Accept(identStart) || tk.Accept("\\") {
+		if tk.Accept("-") {
+			if tk.Accept(">") {
+				return tk.Return(TokenCDC, t.start)
+			} else {
+				return t.ident(tk)
+			}
+		} else if tk.Accept(identStart) || tk.Accept("\\") {
 			return t.ident(tk)
 		}
 
