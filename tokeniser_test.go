@@ -140,6 +140,21 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
+		{ // 16
+			"a abc123 -A_b\\n --123 -\\n\\n",
+			[]parser.Token{
+				{Type: TokenIdent, Data: "a"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenIdent, Data: "abc123"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenIdent, Data: "-A_b\\n"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenIdent, Data: "--123"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenIdent, Data: "-\\n\\n"},
+				{Type: parser.TokenDone},
+			},
+		},
 	} {
 		p := CreateTokeniser(parser.NewStringTokeniser(test.Input))
 
