@@ -306,6 +306,11 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	for t.acceptWordChar(tk) {
 	}
 
+	if id == TokenIdent && tk.Accept("(") {
+		id = TokenFunction
+		t.pushState(')')
+	}
+
 	return tk.Return(id, t.start)
 }
 
