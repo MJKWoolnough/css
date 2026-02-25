@@ -232,7 +232,7 @@ func (t *tokeniser) string(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 		case '\\':
 			tk.Next()
 
-			if !acceptEscape(tk) {
+			if !tk.Accept(noEscape) && !acceptEscape(tk) {
 				return tk.Return(TokenBadString, t.start)
 			}
 		}
