@@ -231,20 +231,28 @@ func (t *tokeniser) string(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 			return tk.Return(TokenString, t.start)
 		case '\\':
 			tk.Next()
-			acceptEscape(tk)
 
+			if !acceptEscape(tk) {
+				return tk.Return(TokenBadString, t.start)
+			}
 		}
 	}
 }
 
-func acceptEscape(tk *parser.Tokeniser) {
-	if !tk.Accept(noEscape) && tk.Accept(hexDigits) {
-		for range 5 {
-			tk.Accept(hexDigits)
-		}
-
-		tk.Accept(whitespace)
+func acceptEscape(tk *parser.Tokeniser) bool {
+	if tk.Accept(noEscape) {
+		return false
+	} else if tk.Except(hexDigits) {
+		return true
 	}
+
+	for range 6 {
+		tk.Accept(hexDigits)
+	}
+
+	tk.Accept(whitespace)
+
+	return true
 }
 
 func (t *tokeniser) number(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
@@ -268,6 +276,7 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	tk.Reset()
 
 	id := TokenIdent
+	state := tk.State()
 
 	if tk.Accept("@") {
 		id = TokenAtKeyword
@@ -275,15 +284,31 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 
 	if !tk.Accept("-") || !tk.Accept("-") {
 		if tk.Accept("\\") {
-			acceptEscape(tk)
+			if !acceptEscape(tk) {
+				state.Reset()
+				tk.Next()
+
+				return tk.Return(TokenDelim, t.start)
+			}
 		} else if !tk.Accept(identStart) {
-			acceptNonAscii(tk)
+			if !acceptNonAscii(tk) {
+				state.Reset()
+				tk.Next()
+
+				return tk.Return(TokenDelim, t.start)
+			}
 		}
 	}
 
 	for {
+		state = tk.State()
+
 		if tk.Accept("\\") {
-			acceptEscape(tk)
+			state.Reset()
+
+			if !acceptEscape(tk) {
+				break
+			}
 		} else if !tk.Accept(identCont) && !acceptNonAscii(tk) {
 			break
 		}
