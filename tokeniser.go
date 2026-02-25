@@ -300,18 +300,7 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 		}
 	}
 
-	for {
-		state = tk.State()
-
-		if tk.Accept("\\") {
-			state.Reset()
-
-			if !acceptEscape(tk) {
-				break
-			}
-		} else if !tk.Accept(identCont) && !acceptNonAscii(tk) {
-			break
-		}
+	for t.acceptWordChar(tk) {
 	}
 
 	return tk.Return(id, t.start)
@@ -323,6 +312,22 @@ func acceptNonAscii(tk *parser.Tokeniser) bool {
 	}
 
 	tk.Next()
+
+	return true
+}
+
+func (t *tokeniser) acceptWordChar(tk *parser.Tokeniser) bool {
+	state := tk.State()
+
+	if tk.Accept("\\") {
+		state.Reset()
+
+		if !acceptEscape(tk) {
+			return false
+		}
+	} else if !tk.Accept(identCont) && !acceptNonAscii(tk) {
+		return false
+	}
 
 	return true
 }
