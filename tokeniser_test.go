@@ -213,6 +213,23 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
+		{ // 21
+			"a()abc123() -A_b\\n() @--123()",
+			[]parser.Token{
+				{Type: TokenFunction, Data: "a("},
+				{Type: TokenCloseParen, Data: ")"},
+				{Type: TokenFunction, Data: "abc123("},
+				{Type: TokenCloseParen, Data: ")"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenFunction, Data: "-A_b\\n("},
+				{Type: TokenCloseParen, Data: ")"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenAtKeyword, Data: "@--123"},
+				{Type: TokenOpenParen, Data: "("},
+				{Type: TokenCloseParen, Data: ")"},
+				{Type: parser.TokenDone},
+			},
+		},
 	} {
 		p := CreateTokeniser(parser.NewStringTokeniser(test.Input))
 
