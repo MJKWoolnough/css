@@ -283,6 +283,7 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 
 	for {
 		if tk.Accept("\\") {
+			acceptEscape(tk)
 		} else if !tk.Accept(identCont) && !acceptNonAscii(tk) {
 			break
 		}
