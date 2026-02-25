@@ -118,6 +118,9 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	} else if tk.Accept("'") {
 		return t.string(tk)
 	} else if tk.Accept("#") {
+		if t.acceptWordChar(tk) {
+			return t.hash(tk)
+		}
 	} else if tk.Accept("(") {
 		t.pushState(')')
 
@@ -330,4 +333,11 @@ func (t *tokeniser) acceptWordChar(tk *parser.Tokeniser) bool {
 	}
 
 	return true
+}
+
+func (t *tokeniser) hash(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
+	for t.acceptWordChar(tk) {
+	}
+
+	return tk.Return(TokenHash, t.start)
 }
