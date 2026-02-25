@@ -73,6 +73,13 @@ func TestTokeniser(t *testing.T) {
 			},
 		},
 		{ // 9
+			"'escaped newline \\\n'",
+			[]parser.Token{
+				{Type: TokenString, Data: "'escaped newline \\\n'"},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 10
 			"'escape followed by newline \\AaFf012\n'",
 			[]parser.Token{
 				{Type: TokenBadString, Data: "'escape followed by newline \\AaFf012\n"},
@@ -80,7 +87,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 10
+		{ // 11
 			"'bad string\n ",
 			[]parser.Token{
 				{Type: TokenBadString, Data: "'bad string\n"},
@@ -88,7 +95,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 11
+		{ // 12
 			"'\"'\"'\"",
 			[]parser.Token{
 				{Type: TokenString, Data: "'\"'"},
@@ -96,7 +103,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 12
+		{ // 13
 			"{}[",
 			[]parser.Token{
 				{Type: TokenOpenBrace, Data: "{"},
@@ -105,7 +112,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenError, Data: "unexpected EOF"},
 			},
 		},
-		{ // 13
+		{ // 14
 			"[(]",
 			[]parser.Token{
 				{Type: TokenOpenBracket, Data: "["},
@@ -114,7 +121,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenError, Data: "unexpected EOF"},
 			},
 		},
-		{ // 14
+		{ // 15
 			",:;",
 			[]parser.Token{
 				{Type: TokenComma, Data: ","},
@@ -123,7 +130,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 15
+		{ // 16
 			"1 2 12 +3.14 -.e- 10e+2 .5 .",
 			[]parser.Token{
 				{Type: TokenNumber, Data: "1"},
@@ -144,7 +151,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 16
+		{ // 17
 			"a abc123 -A_b\\n --123 -\\n\\n \\n",
 			[]parser.Token{
 				{Type: TokenIdent, Data: "a"},
@@ -161,7 +168,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 17
+		{ // 18
 			"@a @abc123 @-A_b\\n @--123 @-\\n\\n @\\n",
 			[]parser.Token{
 				{Type: TokenAtKeyword, Data: "@a"},
@@ -178,7 +185,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 18
+		{ // 19
 			"<!-- --><!---->",
 			[]parser.Token{
 				{Type: TokenCDO, Data: "<!--"},
