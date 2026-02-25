@@ -325,19 +325,19 @@ func acceptNonAscii(tk *parser.Tokeniser) bool {
 }
 
 func (t *tokeniser) acceptWordChar(tk *parser.Tokeniser) bool {
-	state := tk.State()
-
-	if tk.Accept("\\") {
-		state.Reset()
-
-		if !acceptEscape(tk) {
-			return false
-		}
-	} else if !tk.Accept(identCont) && !acceptNonAscii(tk) {
-		return false
+	if tk.Accept(identCont) || acceptNonAscii(tk) {
+		return true
 	}
 
-	return true
+	state := tk.State()
+
+	if tk.Accept("\\") && acceptEscape(tk) {
+		return true
+	}
+
+	state.Reset()
+
+	return false
 }
 
 func (t *tokeniser) hash(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
