@@ -286,6 +286,7 @@ func (t *tokeniser) number(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 	}
 
 	state = tk.State()
+
 	if tk.Accept("eE") {
 		tk.Accept("+-")
 
@@ -296,9 +297,15 @@ func (t *tokeniser) number(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 		}
 	}
 
+	state = tk.State()
+
 	if tk.Accept("%") {
 		return tk.Return(TokenPercentage, t.start)
+	} else if acceptIdent(tk) {
+		return tk.Return(TokenDimension, t.start)
 	}
+
+	state.Reset()
 
 	return tk.Return(TokenNumber, t.start)
 }
