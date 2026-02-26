@@ -104,9 +104,7 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 		}
 
 		return tk.ReturnError(io.ErrUnexpectedEOF)
-	}
-
-	if tk.Accept("/") {
+	} else if tk.Accept("/") {
 		if tk.Accept("*") {
 			return t.parseComment(tk)
 		}
