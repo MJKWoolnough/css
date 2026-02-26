@@ -296,6 +296,10 @@ func (t *tokeniser) number(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 		}
 	}
 
+	if tk.Accept("%") {
+		return tk.Return(TokenPercentage, t.start)
+	}
+
 	return tk.Return(TokenNumber, t.start)
 }
 
