@@ -118,7 +118,7 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	} else if tk.Accept("'") {
 		return t.string(tk)
 	} else if tk.Accept("#") {
-		if t.acceptWordChar(tk) {
+		if acceptWordChar(tk) {
 			return t.hash(tk)
 		}
 	} else if tk.Accept("(") {
@@ -313,25 +313,11 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 		id = TokenAtKeyword
 	}
 
-	if !tk.Accept("-") || !tk.Accept("-") {
-		if tk.Accept("\\") {
-			if !acceptEscape(tk) {
-				state.Reset()
-				tk.Next()
+	if !acceptIdent(tk) {
+		state.Reset()
+		tk.Next()
 
-				return tk.Return(TokenDelim, t.start)
-			}
-		} else if !tk.Accept(identStart) {
-			if !acceptNonAscii(tk) {
-				state.Reset()
-				tk.Next()
-
-				return tk.Return(TokenDelim, t.start)
-			}
-		}
-	}
-
-	for t.acceptWordChar(tk) {
+		return tk.Return(TokenDelim, t.start)
 	}
 
 	if id == TokenIdent && tk.Accept("(") {
@@ -340,6 +326,25 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	}
 
 	return tk.Return(id, t.start)
+}
+
+func acceptIdent(tk *parser.Tokeniser) bool {
+	if !tk.Accept("-") || !tk.Accept("-") {
+		if tk.Accept("\\") {
+			if !acceptEscape(tk) {
+				return false
+			}
+		} else if !tk.Accept(identStart) {
+			if !acceptNonAscii(tk) {
+				return false
+			}
+		}
+	}
+
+	for acceptWordChar(tk) {
+	}
+
+	return true
 }
 
 func acceptNonAscii(tk *parser.Tokeniser) bool {
@@ -352,7 +357,7 @@ func acceptNonAscii(tk *parser.Tokeniser) bool {
 	return true
 }
 
-func (t *tokeniser) acceptWordChar(tk *parser.Tokeniser) bool {
+func acceptWordChar(tk *parser.Tokeniser) bool {
 	if tk.Accept(identCont) || acceptNonAscii(tk) {
 		return true
 	}
@@ -369,7 +374,7 @@ func (t *tokeniser) acceptWordChar(tk *parser.Tokeniser) bool {
 }
 
 func (t *tokeniser) hash(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
-	for t.acceptWordChar(tk) {
+	for acceptWordChar(tk) {
 	}
 
 	return tk.Return(TokenHash, t.start)
