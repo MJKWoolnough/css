@@ -150,6 +150,23 @@ func TestTokeniser(t *testing.T) {
 			},
 		},
 		{ // 17
+			"1% 2% 12% +3.14% 10e+2% .5%",
+			[]parser.Token{
+				{Type: TokenPercentage, Data: "1%"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenPercentage, Data: "2%"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenPercentage, Data: "12%"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenPercentage, Data: "+3.14%"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenPercentage, Data: "10e+2%"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenPercentage, Data: ".5%"},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 18
 			"a abc123 -A_b\\n --123 -\\n\\n \\n",
 			[]parser.Token{
 				{Type: TokenIdent, Data: "a"},
@@ -166,7 +183,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 18
+		{ // 19
 			"@a @abc123 @-A_b\\n @--123 @-\\n\\n @\\n",
 			[]parser.Token{
 				{Type: TokenAtKeyword, Data: "@a"},
@@ -183,7 +200,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 19
+		{ // 20
 			"<!-- --><!---->",
 			[]parser.Token{
 				{Type: TokenCDO, Data: "<!--"},
@@ -194,7 +211,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 20
+		{ // 21
 			"#a #abc123 #-A_b\\n #--123 #-\\n\\n #\\n",
 			[]parser.Token{
 				{Type: TokenHash, Data: "#a"},
@@ -211,7 +228,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 21
+		{ // 22
 			"a()abc123() -A_b\\n() @--123()",
 			[]parser.Token{
 				{Type: TokenFunction, Data: "a("},
