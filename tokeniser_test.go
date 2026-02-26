@@ -167,6 +167,23 @@ func TestTokeniser(t *testing.T) {
 			},
 		},
 		{ // 18
+			"1a 2abc123 12-A_b\\n +3.14--123 10e+2-\\n\\n .5\\n",
+			[]parser.Token{
+				{Type: TokenDimension, Data: "1a"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenDimension, Data: "2abc123"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenDimension, Data: "12-A_b\\n"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenDimension, Data: "+3.14--123"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenDimension, Data: "10e+2\\n\\n"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenDimension, Data: ".5\\n"},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 19
 			"a abc123 -A_b\\n --123 -\\n\\n \\n",
 			[]parser.Token{
 				{Type: TokenIdent, Data: "a"},
@@ -183,7 +200,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 19
+		{ // 20
 			"@a @abc123 @-A_b\\n @--123 @-\\n\\n @\\n",
 			[]parser.Token{
 				{Type: TokenAtKeyword, Data: "@a"},
@@ -200,7 +217,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 20
+		{ // 21
 			"<!-- --><!---->",
 			[]parser.Token{
 				{Type: TokenCDO, Data: "<!--"},
@@ -211,7 +228,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 21
+		{ // 22
 			"#a #abc123 #-A_b\\n #--123 #-\\n\\n #\\n",
 			[]parser.Token{
 				{Type: TokenHash, Data: "#a"},
@@ -228,7 +245,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 22
+		{ // 23
 			"a()abc123() -A_b\\n() @--123()",
 			[]parser.Token{
 				{Type: TokenFunction, Data: "a("},
