@@ -256,6 +256,10 @@ func (t *tokeniser) string(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 }
 
 func acceptEscape(tk *parser.Tokeniser) bool {
+	if tk.Peek() == -1 {
+		return false
+	}
+
 	if tk.Accept(noEscape) {
 		return false
 	} else if tk.Except(hexDigits) {
