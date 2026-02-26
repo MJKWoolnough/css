@@ -16,6 +16,7 @@ const (
 	identCont    = letters + "_" + digit + "-"
 	hexDigits    = digit + "abcdefABCDEF"
 	noEscape     = "\n"
+	noURL        = whitespace + "\"'()\\\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x7f"
 )
 
 const (
@@ -316,6 +317,12 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	id := TokenIdent
 	state := tk.State()
 
+	if tk.AcceptString("url(", false) == 4 {
+		return t.url(tk)
+	}
+
+	state.Reset()
+
 	if tk.Accept("@") {
 		id = TokenAtKeyword
 	}
@@ -385,4 +392,42 @@ func (t *tokeniser) hash(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) 
 	}
 
 	return tk.Return(TokenHash, t.start)
+}
+
+func (t *tokeniser) url(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
+	tk.AcceptRun(whitespace)
+
+	id := TokenURL
+
+Loop:
+	for {
+		switch tk.ExceptRun(noURL) {
+		case -1:
+			return tk.Return(TokenBadURL, t.start)
+		case ' ', '\t', '\n':
+			tk.AcceptRun(whitespace)
+
+			if tk.Accept(")") {
+				break Loop
+			}
+
+			id = TokenBadURL
+		case ')':
+			tk.Next()
+
+			break Loop
+		case '\\':
+			tk.Next()
+
+			if !acceptEscape(tk) {
+				id = TokenBadURL
+			}
+		default:
+			tk.Next()
+
+			id = TokenBadURL
+		}
+	}
+
+	return tk.Return(id, t.start)
 }
