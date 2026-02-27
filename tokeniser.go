@@ -321,7 +321,7 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	id := TokenIdent
 	state := tk.State()
 
-	if tk.AcceptString("url(", false) == 4 {
+	if tk.AcceptString("url(", true) == 4 {
 		tk.AcceptRun(whitespace)
 
 		if c := tk.Peek(); c != '"' && c != '\'' {
