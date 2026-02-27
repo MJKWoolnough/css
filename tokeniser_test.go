@@ -169,7 +169,7 @@ func TestTokeniser(t *testing.T) {
 			},
 		},
 		{ // 18
-			"1a 2abc123 12-A_b\\n +3.14--123 10e+2-\\n\\n .5\\n",
+			"1a 2abc123 12-A_b\\n +3.14--123 10e+2-\\n\\n .5\\n 10px 10 px",
 			[]parser.Token{
 				{Type: TokenDimension, Data: "1a"},
 				{Type: TokenWhitespace, Data: " "},
@@ -182,6 +182,12 @@ func TestTokeniser(t *testing.T) {
 				{Type: TokenDimension, Data: "10e+2-\\n\\n"},
 				{Type: TokenWhitespace, Data: " "},
 				{Type: TokenDimension, Data: ".5\\n"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenDimension, Data: "10px"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenNumber, Data: "10"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenIdent, Data: "px"},
 				{Type: parser.TokenDone},
 			},
 		},
