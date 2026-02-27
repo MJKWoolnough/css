@@ -200,6 +200,8 @@ func (t *tokeniser) start(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 		state.Reset()
 	} else if tk.Accept(identStart) {
 		return t.ident(tk)
+	} else {
+		tk.Next()
 	}
 
 	return tk.Return(TokenDelim, t.start)
