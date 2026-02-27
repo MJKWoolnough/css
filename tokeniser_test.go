@@ -291,6 +291,25 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
+		{ // 25
+			"@ # . @#.|!$&",
+			[]parser.Token{
+				{Type: TokenDelim, Data: "@"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenDelim, Data: "#"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenDelim, Data: "."},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenDelim, Data: "@"},
+				{Type: TokenDelim, Data: "#"},
+				{Type: TokenDelim, Data: "."},
+				{Type: TokenDelim, Data: "|"},
+				{Type: TokenDelim, Data: "!"},
+				{Type: TokenDelim, Data: "$"},
+				{Type: TokenDelim, Data: "&"},
+				{Type: parser.TokenDone},
+			},
+		},
 	} {
 		p := CreateTokeniser(parser.NewStringTokeniser(test.Input))
 
