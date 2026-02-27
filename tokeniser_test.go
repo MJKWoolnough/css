@@ -131,7 +131,7 @@ func TestTokeniser(t *testing.T) {
 			},
 		},
 		{ // 16
-			"1 2 12 +3.14 10e+2 .5 .",
+			"1 2 12 +3.14 10e+2 1.2E-9 .5 .",
 			[]parser.Token{
 				{Type: TokenNumber, Data: "1"},
 				{Type: TokenWhitespace, Data: " "},
@@ -142,6 +142,8 @@ func TestTokeniser(t *testing.T) {
 				{Type: TokenNumber, Data: "+3.14"},
 				{Type: TokenWhitespace, Data: " "},
 				{Type: TokenNumber, Data: "10e+2"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenNumber, Data: "1.2E-9"},
 				{Type: TokenWhitespace, Data: " "},
 				{Type: TokenNumber, Data: ".5"},
 				{Type: TokenWhitespace, Data: " "},
