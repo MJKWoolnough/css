@@ -273,13 +273,15 @@ func TestTokeniser(t *testing.T) {
 			},
 		},
 		{ // 24
-			"url(abc) url( abc ) url() url(abc\") url('abc') url(abc\\)",
+			"url(abc) url( abc ) url() url(!#$%&) url(abc\") url('abc') url(abc\\)",
 			[]parser.Token{
 				{Type: TokenURL, Data: "url(abc)"},
 				{Type: TokenWhitespace, Data: " "},
 				{Type: TokenURL, Data: "url( abc )"},
 				{Type: TokenWhitespace, Data: " "},
 				{Type: TokenURL, Data: "url()"},
+				{Type: TokenWhitespace, Data: " "},
+				{Type: TokenURL, Data: "url(!#$%&)"},
 				{Type: TokenWhitespace, Data: " "},
 				{Type: TokenBadURL, Data: "url(abc\")"},
 				{Type: TokenWhitespace, Data: " "},
