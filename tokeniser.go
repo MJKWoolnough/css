@@ -322,7 +322,11 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 	state := tk.State()
 
 	if tk.AcceptString("url(", false) == 4 {
-		return t.url(tk)
+		tk.AcceptRun(whitespace)
+
+		if c := tk.Peek(); c != '"' && c != '\'' {
+			return t.url(tk)
+		}
 	}
 
 	state.Reset()
@@ -399,8 +403,6 @@ func (t *tokeniser) hash(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) 
 }
 
 func (t *tokeniser) url(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
-	tk.AcceptRun(whitespace)
-
 	id := TokenURL
 
 Loop:
