@@ -113,8 +113,9 @@ func TestTokeniser(t *testing.T) {
 			},
 		},
 		{ // 14
-			"[(]",
+			")[(]",
 			[]parser.Token{
+				{Type: TokenDelim, Data: ")"},
 				{Type: TokenOpenBracket, Data: "["},
 				{Type: TokenOpenParen, Data: "("},
 				{Type: TokenDelim, Data: "]"},
