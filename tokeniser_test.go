@@ -26,6 +26,12 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
+		{ // 2
+			"/* A Comment",
+			[]parser.Token{
+				{Type: parser.TokenError, Data: "unexpected EOF"},
+			},
+		},
 		{ // 3
 			" /* A Comment */\n \t",
 			[]parser.Token{
