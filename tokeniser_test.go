@@ -219,7 +219,7 @@ func TestTokeniser(t *testing.T) {
 			},
 		},
 		{ // 20
-			"a abc123 -A_b\\n --123 -\\n\\n \\n abc\\\n",
+			"a abc123 -A_b\\n --123 -\\n\\n \\n abc\\\n abc£def",
 			[]parser.Token{
 				{Type: TokenIdent, Data: "a"},
 				{Type: TokenWhitespace, Data: " "},
@@ -235,7 +235,8 @@ func TestTokeniser(t *testing.T) {
 				{Type: TokenWhitespace, Data: " "},
 				{Type: TokenIdent, Data: "abc"},
 				{Type: TokenDelim, Data: "\\"},
-				{Type: TokenWhitespace, Data: "\n"},
+				{Type: TokenWhitespace, Data: "\n "},
+				{Type: TokenIdent, Data: "abc£def"},
 				{Type: parser.TokenDone},
 			},
 		},
