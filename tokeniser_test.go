@@ -85,6 +85,13 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
+		{ // 9
+			"'escaped EOF \\",
+			[]parser.Token{
+				{Type: TokenBadString, Data: "'escaped EOF \\"},
+				{Type: parser.TokenDone},
+			},
+		},
 		{ // 10
 			"'escape followed by newline \\AaFf012\n'",
 			[]parser.Token{
