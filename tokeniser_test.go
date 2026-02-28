@@ -123,6 +123,15 @@ func TestTokeniser(t *testing.T) {
 			},
 		},
 		{ // 15
+			"[abc]",
+			[]parser.Token{
+				{Type: TokenOpenBracket, Data: "["},
+				{Type: TokenIdent, Data: "abc"},
+				{Type: TokenCloseBracket, Data: "]"},
+				{Type: parser.TokenDone},
+			},
+		},
+		{ // 16
 			",:;",
 			[]parser.Token{
 				{Type: TokenComma, Data: ","},
@@ -131,7 +140,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 16
+		{ // 17
 			"1 2 12 +3.14 -1 10e+2 1.2E-9 .5 .",
 			[]parser.Token{
 				{Type: TokenNumber, Data: "1"},
@@ -154,7 +163,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 17
+		{ // 18
 			"1% 2% 12% +3.14% 10e+2% .5%",
 			[]parser.Token{
 				{Type: TokenPercentage, Data: "1%"},
@@ -171,7 +180,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 18
+		{ // 19
 			"1a 2abc123 12-A_b\\n +3.14--123 10e+2-\\n\\n .5\\n 10px 10 px",
 			[]parser.Token{
 				{Type: TokenDimension, Data: "1a"},
@@ -194,7 +203,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 19
+		{ // 20
 			"a abc123 -A_b\\n --123 -\\n\\n \\n",
 			[]parser.Token{
 				{Type: TokenIdent, Data: "a"},
@@ -211,7 +220,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 20
+		{ // 21
 			"@a @abc123 @-A_b\\n @--123 @-\\n\\n @\\n",
 			[]parser.Token{
 				{Type: TokenAtKeyword, Data: "@a"},
@@ -228,7 +237,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 21
+		{ // 22
 			"<!-- --><!----><abc>",
 			[]parser.Token{
 				{Type: TokenCDO, Data: "<!--"},
@@ -242,7 +251,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 22
+		{ // 23
 			"#a #abc123 #-A_b\\n #--123 #-\\n\\n #\\n",
 			[]parser.Token{
 				{Type: TokenHash, Data: "#a"},
@@ -259,7 +268,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 23
+		{ // 24
 			"a()abc123() -A_b\\n() @--123()",
 			[]parser.Token{
 				{Type: TokenFunction, Data: "a("},
@@ -276,7 +285,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 24
+		{ // 25
 			"url(abc) uRl( abc ) URL() UrL(!#$%&) url(abc\") url('abc') url(\"\") url(abc\\)",
 			[]parser.Token{
 				{Type: TokenURL, Data: "url(abc)"},
@@ -301,7 +310,7 @@ func TestTokeniser(t *testing.T) {
 				{Type: parser.TokenDone},
 			},
 		},
-		{ // 25
+		{ // 26
 			"@ # . @#.|!$&",
 			[]parser.Token{
 				{Type: TokenDelim, Data: "@"},
