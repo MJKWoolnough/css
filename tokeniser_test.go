@@ -229,13 +229,16 @@ func TestTokeniser(t *testing.T) {
 			},
 		},
 		{ // 21
-			"<!-- --><!---->",
+			"<!-- --><!----><abc>",
 			[]parser.Token{
 				{Type: TokenCDO, Data: "<!--"},
 				{Type: TokenWhitespace, Data: " "},
 				{Type: TokenCDC, Data: "-->"},
 				{Type: TokenCDO, Data: "<!--"},
 				{Type: TokenCDC, Data: "-->"},
+				{Type: TokenDelim, Data: "<"},
+				{Type: TokenIdent, Data: "abc"},
+				{Type: TokenDelim, Data: ">"},
 				{Type: parser.TokenDone},
 			},
 		},
