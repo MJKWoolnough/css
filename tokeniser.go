@@ -351,7 +351,7 @@ func (t *tokeniser) ident(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc)
 }
 
 func acceptIdent(tk *parser.Tokeniser) bool {
-	if !tk.Accept("-") || !tk.Accept("-") {
+	if tk.AcceptString("--", false) != 2 {
 		if tk.Accept("\\") {
 			if !acceptEscape(tk) {
 				return false
