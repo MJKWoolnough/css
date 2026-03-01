@@ -15,7 +15,7 @@ const (
 	identStart   = letters + "_"
 	identCont    = letters + "_" + digit + "-"
 	hexDigits    = digit + "abcdefABCDEF"
-	noEscape     = "\n"
+	newline      = "\n"
 	noURL        = whitespace + "\"'()\\\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x7f"
 )
 
@@ -248,7 +248,7 @@ func (t *tokeniser) string(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 		case '\\':
 			tk.Next()
 
-			if !tk.Accept(noEscape) && !acceptEscape(tk) {
+			if !tk.Accept(newline) && !acceptEscape(tk) {
 				return tk.Return(TokenBadString, t.start)
 			}
 		}
@@ -260,7 +260,7 @@ func acceptEscape(tk *parser.Tokeniser) bool {
 		return false
 	}
 
-	if tk.Accept(noEscape) {
+	if tk.Accept(newline) {
 		return false
 	} else if tk.Except(hexDigits) {
 		return true
