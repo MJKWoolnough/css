@@ -22,14 +22,7 @@ type Comments []*Token
 
 type cssParser Tokens
 
-// Tokeniser is an interface representing a tokeniser.
-type Tokeniser interface {
-	TokeniserState(parser.TokenFunc)
-	Iter(func(parser.Token) bool)
-	GetError() error
-}
-
-func newCSSParser(t Tokeniser) (cssParser, error) {
+func newCSSParser(t *parser.Tokeniser) (cssParser, error) {
 	var (
 		tokens             cssParser
 		pos, line, linePos uint64
