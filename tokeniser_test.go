@@ -366,7 +366,7 @@ func TestTokeniser(t *testing.T) {
 			},
 		},
 	} {
-		p := createTokeniser(parser.NewStringTokeniser(test.Input))
+		p := createTokeniser(parser.NewStringTokeniser(test.Input), true)
 
 		for m, tkn := range test.Output {
 			if tk, _ := p.GetToken(); tk.Type != tkn.Type {

@@ -3,7 +3,7 @@ package css
 import "vimagination.zapto.org/parser"
 
 func ParseSheet(t parser.Tokeniser) (*Sheet, error) {
-	c, err := newCSSParser(createTokeniser(t))
+	c, err := newCSSParser(createTokeniser(t, true))
 	if err != nil {
 		return nil, err
 	}
