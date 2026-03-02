@@ -69,7 +69,7 @@ func (p *preprocessor) ReadRune() (rune, int, error) {
 	return r, 0, nil
 }
 
-func createTokeniser(t parser.Tokeniser, preprocess bool) *parser.Tokeniser {
+func CreateTokeniser(t parser.Tokeniser, preprocess bool) *parser.Tokeniser {
 	if preprocess {
 		t = parser.NewRuneReaderTokeniser(&preprocessor{t})
 	}
