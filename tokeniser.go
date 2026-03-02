@@ -250,7 +250,7 @@ func (t *tokeniser) string(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 		case '\\':
 			tk.Next()
 
-			if !tk.Accept(newline) && !acceptEscape(tk) {
+			if !acceptNewline(tk) && !acceptEscape(tk) {
 				return tk.Return(TokenBadString, t.start)
 			}
 		}
@@ -272,7 +272,7 @@ func acceptEscape(tk *parser.Tokeniser) bool {
 		return false
 	}
 
-	if tk.Accept(newline) {
+	if acceptNewline(tk) {
 		return false
 	} else if tk.Except(hexDigits) {
 		return true
@@ -282,7 +282,9 @@ func acceptEscape(tk *parser.Tokeniser) bool {
 		tk.Accept(hexDigits)
 	}
 
-	tk.Accept(whitespace)
+	if !acceptNewline(tk) {
+		tk.Accept(whitespace)
+	}
 
 	return true
 }
