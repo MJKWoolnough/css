@@ -7,7 +7,6 @@ import (
 )
 
 const (
-	whitespace   = " \t\n"
 	digit        = "0123456789"
 	upperLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	lowerLetters = "abcdefghijklmnopqrstuvwxyz"
@@ -15,7 +14,8 @@ const (
 	identStart   = letters + "_"
 	identCont    = letters + "_" + digit + "-"
 	hexDigits    = digit + "abcdefABCDEF"
-	newline      = "\n"
+	newline      = "\n\r\f"
+	whitespace   = " \t" + newline
 	noURL        = whitespace + "\"'()\\\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x7f"
 )
 
@@ -230,15 +230,15 @@ func (t *tokeniser) string(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 
 	switch tk.Next() {
 	case '"':
-		chars = "\"\\\n"
+		chars = "\"\\" + newline
 	case '\'':
-		chars = "'\\\n"
+		chars = "'\\" + newline
 	}
 
 	for {
 		switch tk.ExceptRun(chars) {
-		case '\n':
-			tk.Next()
+		case '\n', '\r', '\f':
+			acceptNewline(tk)
 
 			fallthrough
 		case -1:
@@ -255,6 +255,16 @@ func (t *tokeniser) string(tk *parser.Tokeniser) (parser.Token, parser.TokenFunc
 			}
 		}
 	}
+}
+
+func acceptNewline(tk *parser.Tokeniser) bool {
+	if tk.Accept("\r") {
+		tk.Accept("\n")
+
+		return true
+	}
+
+	return tk.Accept(newline)
 }
 
 func acceptEscape(tk *parser.Tokeniser) bool {
@@ -412,7 +422,7 @@ Loop:
 		switch tk.ExceptRun(noURL) {
 		case -1:
 			return tk.Return(TokenBadURL, t.start)
-		case ' ', '\t', '\n':
+		case ' ', '\t', '\n', '\r', '\f':
 			tk.AcceptRun(whitespace)
 
 			if tk.Accept(")") {
