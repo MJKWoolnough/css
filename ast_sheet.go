@@ -40,8 +40,49 @@ func (s *Sheet) parse(c *cssParser) error {
 	return nil
 }
 
-type Rule struct{}
+type Rule struct {
+	CommentDelimiter *Token
+	AtRule           *AtRule
+	QualifiedRule    *QualifiedRule
+	Tokens           Tokens
+}
 
 func (r *Rule) parse(c *cssParser) error {
+	if c.Accept(TokenCDO, TokenCDC) {
+		r.CommentDelimiter = c.GetLastToken()
+	} else if tk := c.Peek(); tk.Type == TokenAtKeyword {
+		d := c.NewGoal()
+		r.AtRule = new(AtRule)
+
+		if err := r.AtRule.parse(&d); err != nil {
+			return c.Error("Rule", err)
+		}
+
+		c.Score(d)
+	} else {
+		d := c.NewGoal()
+		r.QualifiedRule = new(QualifiedRule)
+
+		if err := r.QualifiedRule.parse(&d); err != nil {
+			return c.Error("Rule", err)
+		}
+
+		c.Score(d)
+	}
+
+	r.Tokens = c.ToTokens()
+
+	return nil
+}
+
+type AtRule struct{}
+
+func (a *AtRule) parse(c *cssParser) error {
+	return nil
+}
+
+type QualifiedRule struct{}
+
+func (q *QualifiedRule) parse(c *cssParser) error {
 	return nil
 }
