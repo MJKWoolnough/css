@@ -385,3 +385,36 @@ func TestTokeniser(t *testing.T) {
 		}
 	}
 }
+
+func TestTokeniserNoPreprocess(t *testing.T) {
+	for n, test := range [...]struct {
+		Input  string
+		Output []parser.Token
+	}{
+		{ // 1
+			" \t\n\r\r\n\f",
+			[]parser.Token{
+				{Type: TokenWhitespace, Data: " \t\n\r\r\n\f"},
+				{Type: parser.TokenDone},
+			},
+		},
+	} {
+		p := createTokeniser(parser.NewStringTokeniser(test.Input), false)
+
+		for m, tkn := range test.Output {
+			if tk, _ := p.GetToken(); tk.Type != tkn.Type {
+				if tk.Type == parser.TokenError {
+					t.Errorf("test %d.%d: unexpected error: %s", n+1, m+1, tk.Data)
+				} else {
+					t.Errorf("test %d.%d: Incorrect type, expecting %d, got %d", n+1, m+1, tkn.Type, tk.Type)
+				}
+
+				break
+			} else if tk.Data != tkn.Data {
+				t.Errorf("test %d.%d: Incorrect data, expecting %q, got %q", n+1, m+1, tkn.Data, tk.Data)
+
+				break
+			}
+		}
+	}
+}
