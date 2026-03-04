@@ -29,26 +29,8 @@ func Unquote(str string) (string, error) {
 		case rune(str[0]):
 			return "", ErrBadString
 		case '\\':
-			tk.Next()
-			tk.Get()
-
-			if tk.Accept(hexDigits) {
-				for range 5 {
-					tk.Accept(hexDigits)
-				}
-
-				unicode, err := strconv.ParseUint(tk.Get(), 16, 32)
-				if err != nil {
-					return "", err
-				}
-
-				buf.WriteRune(rune(unicode))
-
-				tk.Accept(whitespace)
-				tk.Get()
-			} else {
-				tk.Get()
-				tk.Next()
+			if err := unescape(&tk, &buf); err != nil {
+				return "", err
 			}
 		default:
 			tk.Next()
@@ -56,4 +38,69 @@ func Unquote(str string) (string, error) {
 	}
 }
 
-var ErrBadString = errors.New("bad string")
+func unescape(tk *parser.Tokeniser, buf *strings.Builder) error {
+	tk.Next()
+	tk.Get()
+
+	if tk.Accept(hexDigits) {
+		for range 5 {
+			tk.Accept(hexDigits)
+		}
+
+		unicode, err := strconv.ParseUint(tk.Get(), 16, 32)
+		if err != nil {
+			return err
+		}
+
+		buf.WriteRune(rune(unicode))
+
+		tk.Accept(whitespace)
+		tk.Get()
+	} else {
+		tk.Get()
+		tk.Next()
+	}
+
+	return nil
+}
+
+func UnURL(str string) (string, error) {
+	if len(str) < 5 || strings.ToLower(str[:4]) != "url(" || str[len(str)-1] != ')' {
+		return "", ErrBadURL
+	}
+
+	tk := parser.NewStringTokeniser(str[4 : len(str)-1])
+
+	tk.AcceptRun(whitespace)
+	tk.Get()
+
+	var buf strings.Builder
+
+	for {
+		next := tk.ExceptRun("\"'\\()" + whitespace)
+
+		buf.WriteString(tk.Get())
+
+		switch next {
+		case ' ', '\t', '\r', '\n', '\f':
+			if tk.AcceptRun(whitespace) != -1 {
+				return "", ErrBadURL
+			}
+
+			fallthrough
+		case -1:
+			return buf.String(), nil
+		case '\\':
+			if err := unescape(&tk, &buf); err != nil {
+				return "", err
+			}
+		default:
+			return "", ErrBadURL
+		}
+	}
+}
+
+var (
+	ErrBadString = errors.New("bad string")
+	ErrBadURL    = errors.New("bad url")
+)
