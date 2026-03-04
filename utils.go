@@ -64,6 +64,7 @@ func unescape(tk *parser.Tokeniser, buf *strings.Builder) error {
 	return nil
 }
 
+// UnURL retrieves the escaped URL from a 'url(...)' string value."
 func UnURL(str string) (string, error) {
 	if len(str) < 5 || strings.ToLower(str[:4]) != "url(" || str[len(str)-1] != ')' {
 		return "", ErrBadURL
@@ -100,6 +101,7 @@ func UnURL(str string) (string, error) {
 	}
 }
 
+// Errors
 var (
 	ErrBadString = errors.New("bad string")
 	ErrBadURL    = errors.New("bad url")
