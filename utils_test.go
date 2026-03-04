@@ -83,3 +83,41 @@ func TestUnquote(t *testing.T) {
 		}
 	}
 }
+
+func TestUnURL(t *testing.T) {
+	for n, test := range [...]struct {
+		Input, Output string
+		Err           error
+	}{
+		{
+			Input: ``,
+			Err:   ErrBadURL,
+		},
+		{
+			Input:  `url()`,
+			Output: ``,
+		},
+		{
+			Input:  `url(abc)`,
+			Output: `abc`,
+		},
+		{
+			Input:  `URL( abc )`,
+			Output: `abc`,
+		},
+		{
+			Input:  `URL( abc )`,
+			Output: `abc`,
+		},
+		{
+			Input:  `URL( \3D \4D )`,
+			Output: `=M`,
+		},
+	} {
+		if out, err := UnURL(test.Input); err != test.Err {
+			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
+		} else if out != test.Output {
+			t.Errorf("test %d: expecting output %q, got %q", n+1, test.Output, out)
+		}
+	}
+}
