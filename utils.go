@@ -8,6 +8,7 @@ import (
 	"vimagination.zapto.org/parser"
 )
 
+// Unquote unquotes a CSS quoted string.
 func Unquote(str string) (string, error) {
 	if len(str) < 2 || str[0] != '\'' && str[0] != '"' || str[0] != str[len(str)-1] {
 		return "", ErrBadString
