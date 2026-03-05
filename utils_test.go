@@ -89,27 +89,27 @@ func TestUnURL(t *testing.T) {
 		Input, Output string
 		Err           error
 	}{
-		{
+		{ // 1
 			Input: ``,
 			Err:   ErrBadURL,
 		},
-		{
+		{ // 2
 			Input:  `url()`,
 			Output: ``,
 		},
-		{
+		{ // 3
 			Input:  `url(abc)`,
 			Output: `abc`,
 		},
-		{
+		{ // 4
 			Input:  `URL( abc )`,
 			Output: `abc`,
 		},
-		{
+		{ // 5
 			Input:  `URL( abc )`,
 			Output: `abc`,
 		},
-		{
+		{ // 6
 			Input:  `URL( \3D \4D )`,
 			Output: `=M`,
 		},
