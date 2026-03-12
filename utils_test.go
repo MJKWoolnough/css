@@ -120,6 +120,10 @@ func TestUnURL(t *testing.T) {
 			Input:  `URL( \3D \4D )`,
 			Output: `=M`,
 		},
+		{ // 7
+			Input: `url(\)`,
+			Err:   io.ErrUnexpectedEOF,
+		},
 	} {
 		if out, err := UnURL(test.Input); err != test.Err {
 			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
