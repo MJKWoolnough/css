@@ -124,6 +124,10 @@ func TestUnURL(t *testing.T) {
 			Input: `url(\)`,
 			Err:   io.ErrUnexpectedEOF,
 		},
+		{ // 8
+			Input: `URL( abc def )`,
+			Err:   ErrBadURL,
+		},
 	} {
 		if out, err := UnURL(test.Input); err != test.Err {
 			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
