@@ -47,10 +47,7 @@ func unescape(tk *parser.Tokeniser, buf *strings.Builder) error {
 			tk.Accept(hexDigits)
 		}
 
-		unicode, err := strconv.ParseUint(tk.Get(), 16, 32)
-		if err != nil {
-			return err
-		}
+		unicode, _ := strconv.ParseUint(tk.Get(), 16, 32)
 
 		buf.WriteRune(rune(unicode))
 
