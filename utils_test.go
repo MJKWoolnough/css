@@ -1,6 +1,9 @@
 package css
 
-import "testing"
+import (
+	"io"
+	"testing"
+)
 
 func TestUnquote(t *testing.T) {
 	for n, test := range [...]struct {
@@ -74,6 +77,10 @@ func TestUnquote(t *testing.T) {
 		{ // 17
 			Input:  `"\=\4D A"`,
 			Output: "=MA",
+		},
+		{ // 18
+			Input: `"\"`,
+			Err:   io.ErrUnexpectedEOF,
 		},
 	} {
 		if out, err := Unquote(test.Input); err != test.Err {
