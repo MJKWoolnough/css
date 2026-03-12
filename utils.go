@@ -2,6 +2,7 @@ package css
 
 import (
 	"errors"
+	"io"
 	"strconv"
 	"strings"
 
@@ -55,7 +56,10 @@ func unescape(tk *parser.Tokeniser, buf *strings.Builder) error {
 		tk.Get()
 	} else {
 		tk.Get()
-		tk.Next()
+
+		if tk.Next() == -1 {
+			return io.ErrUnexpectedEOF
+		}
 	}
 
 	return nil
