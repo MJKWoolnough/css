@@ -128,6 +128,38 @@ func TestUnURL(t *testing.T) {
 			Input: `URL( abc def )`,
 			Err:   ErrBadURL,
 		},
+		{ // 9
+			Input: `URL( abc))`,
+			Err:   ErrBadURL,
+		},
+		{ // 10
+			Input:  `URL( abc\))`,
+			Output: `abc)`,
+		},
+		{ // 11
+			Input: `URL( abc")`,
+			Err:   ErrBadURL,
+		},
+		{ // 12
+			Input:  `URL( abc\")`,
+			Output: `abc"`,
+		},
+		{ // 13
+			Input: `URL(abc')`,
+			Err:   ErrBadURL,
+		},
+		{ // 14
+			Input:  `URL( abc\')`,
+			Output: `abc'`,
+		},
+		{ // 15
+			Input: `URL(abc()`,
+			Err:   ErrBadURL,
+		},
+		{ // 16
+			Input:  `URL( abc\()`,
+			Output: `abc(`,
+		},
 	} {
 		if out, err := UnURL(test.Input); err != test.Err {
 			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
